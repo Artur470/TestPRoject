@@ -27,7 +27,8 @@ SECRET_KEY = config('SECRET_KEY', default='your-fallback-secret-key')
 #   'django-insecure-q@a1z6nx2r#sjhkq5rrkwgmug=@euf-*$6_(jw+be022s6r6p4'
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: v.split(','))
+ALLOWED_HOSTS = ['testproject-95pr.onrender.com', '127.0.0.1', 'localhost']
+
 
 
 # Application definition
