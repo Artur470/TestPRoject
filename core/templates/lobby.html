@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API CRUD операции</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+    <h1>Управление пользователями и группами</h1>
+
+    <!-- Форма создания пользователя -->
+    <h3>Создать пользователя</h3>
+    <form id="createUserForm">
+        <div>
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" placeholder="Введите имя пользователя" required>
+        </div>
+        <div>
+            <label for="email">Электронная почта:</label>
+            <input type="email" id="email" name="email" placeholder="Введите email" required>
+        </div>
+        <button type="submit" id="createUser">Создать пользователя</button>
+    </form>
+    <br><br>
+
+    <!-- Форма создания группы -->
+    <h3>Создать группу</h3>
+    <form id="createGroupForm">
+        <div>
+            <label for="groupName">Название группы:</label>
+            <input type="text" id="groupName" name="groupName" placeholder="Введите название группы" required>
+        </div>
+        <button type="submit" id="createGroup">Создать группу</button>
+    </form>
+    <br><br>
+
+    <!-- Форма добавления пользователя в группу -->
+    <h3>Добавить пользователя в группу</h3>
+    <form id="addUserToGroupForm">
+        <div>
+            <label for="selectGroup">Выберите группу:</label>
+            <select id="selectGroup" name="groupId" required></select>
+        </div>
+        <div>
+            <label for="usernameToAdd">Имя пользователя для добавления:</label>
+            <input type="text" id="usernameToAdd" name="usernameToAdd" placeholder="Введите имя пользователя" required>
+        </div>
+        <button type="submit" id="addUserToGroup">Добавить пользователя в группу</button>
+    </form>
+    <br><br>
+
+    <!-- Форма создания поста -->
+    <h3>Создать пост</h3>
+    <form id="createPostForm">
+        <div>
+            <label for="postTitle">Заголовок поста:</label>
+            <input type="text" id="postTitle" name="title" placeholder="Введите заголовок поста" required>
+        </div>
+        <div>
+            <label for="postContent">Содержание поста:</label>
+            <textarea id="postContent" name="content" placeholder="Введите содержание поста" required></textarea>
+        </div>
+        <div>
+            <label for="author">Автор:</label>
+            <select id="author" name="author" required></select>
+        </div>
+        <button type="submit" id="createPost">Создать пост</button>
+    </form>
+    <br><br>
+
+    <!-- Список пользователей -->
+    <h3>Пользователи</h3>
+    <ul id="userList"></ul>
+
+    <!-- Список групп -->
+    <h3>Группы</h3>
+    <ul id="groupList"></ul>
+
+    <script>
+        const apiBaseUrl = 'http://127.0.0.1:8000/api/';
+
+        // Функция для управления состоянием загрузки
+        function toggleLoading(state) {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => button.disabled = state);
+        }
+
+        // Функция для создания пользователя
+        function createUser(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!username || !email) {
+                alert('Пожалуйста, введите имя пользователя и email');
+                return;
+            }
+
+            toggleLoading(true);
+
+            axios.post(apiBaseUrl + 'users/', { username: username, email: email })
+                .then(response => {
+                    console.log('Пользователь создан:', response.data);
+                    getUsers(); // Обновляем список пользователей
+                    alert('Пользователь успешно создан!');
+                    document.getElementById('createUserForm').reset(); // Очищаем форму
+                })
+                .catch(error => {
+                    console.error('Ошибка при создании пользователя:', error.response?.data || error.message);
+                    alert('Ошибка при создании пользователя: ' + (error.response?.data || error.message));
+                })
+                .finally(() => {
+                    toggleLoading(false);
+                });
+        }
+
+        // Функция для создания группы
+        function createGroup(event) {
+            event.preventDefault();
+
+            const groupName = document.getElementById('groupName').value.trim();
+
+            if (!groupName) {
+                alert('Пожалуйста, укажите название группы');
+                return;
+            }
+
+            toggleLoading(true);
+
+            axios.post(apiBaseUrl + 'groups/', { name: groupName, members: [] })
+                .then(response => {
+                    console.log('Группа создана:', response.data);
+                    getGroups(); // Обновляем список групп
+                    alert('Группа успешно создана!');
+                    document.getElementById('createGroupForm').reset(); // Очищаем форму
+                })
+                .catch(error => {
+                    console.error('Ошибка при создании группы:', error.response?.data || error.message);
+                    alert('Ошибка при создании группы: ' + (error.response?.data || error.message));
+                })
+                .finally(() => {
+                    toggleLoading(false);
+                });
+        }
+
+        // Функция для добавления пользователя в группу
+        function addUserToGroup(event) {
+            event.preventDefault();
+
+            const groupId = document.getElementById('selectGroup').value;
+            const usernameToAdd = document.getElementById('usernameToAdd').value.trim();
+
+            if (!usernameToAdd || !groupId) {
+                alert('Пожалуйста, выберите группу и введите имя пользователя');
+                return;
+            }
+
+            toggleLoading(true);
+
+            axios.post(apiBaseUrl + 'groups/' + groupId + '/add_member/', { username: usernameToAdd })
+                .then(response => {
+                    console.log('Пользователь добавлен в группу:', response.data);
+                    alert('Пользователь успешно добавлен в группу!');
+                    document.getElementById('addUserToGroupForm').reset(); // Очищаем форму
+                })
+                .catch(error => {
+                    console.error('Ошибка при добавлении пользователя в группу:', error.response?.data || error.message);
+                    alert('Ошибка при добавлении пользователя в группу: ' + (error.response?.data || error.message));
+                })
+                .finally(() => {
+                    toggleLoading(false);
+                });
+        }
+
+        // Функция для создания поста
+        function createPost(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const author = document.getElementById('author').value.trim();
+
+            if (!title || !content || !author) {
+                alert('Пожалуйста, укажите заголовок, содержание и автора поста');
+                return;
+            }
+
+            toggleLoading(true);
+
+            axios.post(apiBaseUrl + 'posts/', { title, content, author })
+                .then(response => {
+                    console.log('Пост создан:', response.data);
+                    alert('Пост успешно создан!');
+                    // Очищаем поля формы после создания поста
+                    document.getElementById('postTitle').value = '';
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('author').value = '';
+                })
+                .catch(error => {
+                    console.error('Ошибка при создании поста:', error.response?.data || error.message);
+                    alert('Ошибка при создании поста: ' + (error.response?.data || error.message));
+                })
+                .finally(() => {
+                    toggleLoading(false);
+                });
+        }
+
+        // Функция для получения списка пользователей
+        function getUsers() {
+            axios.get(apiBaseUrl + 'users/')
+                .then(response => {
+                    const users = response.data;
+                    const userList = document.getElementById('userList');
+                    userList.innerHTML = '';
+
+                    users.forEach(user => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `${user.username} (${user.email})`;
+                        userList.appendChild(li);
+
+                        const option = document.createElement('option');
+                        option.value = user.username;
+                        option.textContent = user.username;
+                        document.getElementById('author').appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при получении пользователей:', error.response?.data || error.message);
+                    alert('Ошибка при получении пользователей: ' + (error.response?.data || error.message));
+                });
+        }
+
+        // Функция для получения списка групп
+        function getGroups() {
+            axios.get(apiBaseUrl + 'groups/')
+                .then(response => {
+                    const groups = response.data;
+                    const groupList = document.getElementById('groupList');
+                    const selectGroup = document.getElementById('selectGroup');
+
+                    groupList.innerHTML = '';
+                    selectGroup.innerHTML = '';
+
+                    groups.forEach(group => {
+                        const li = document.createElement('li');
+                        li.innerHTML = group.name;
+                        groupList.appendChild(li);
+
+                        const option = document.createElement('option');
+                        option.value = group.id;
+                        option.textContent = group.name;
+                        selectGroup.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при получении групп:', error.response?.data || error.message);
+                    alert('Ошибка при получении групп: ' + (error.response?.data || error.message));
+                });
+        }
+
+        // Инициализация
+        document.getElementById('createUserForm').addEventListener('submit', createUser);
+        document.getElementById('createGroupForm').addEventListener('submit', createGroup);
+        document.getElementById('addUserToGroupForm').addEventListener('submit', addUserToGroup);
+        document.getElementById('createPostForm').addEventListener('submit', createPost);
+
+        // Загружаем пользователей и группы при старте страницы
+        getUsers();
+        getGroups();
+    </script>
+
+</body>
+</html>
