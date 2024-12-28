@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views  # Импортируем views
-from .views import UserViewSet, UserProfileViewSet, PostViewSet, GroupViewSet
+from .views import UserViewSet, UserProfileViewSet, PostViewSet, GroupViewSet, add_user_to_group
 
 # Создаём объект роутера
 router = DefaultRouter()

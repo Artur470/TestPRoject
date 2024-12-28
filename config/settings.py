@@ -28,7 +28,8 @@ SECRET_KEY = config('SECRET_KEY', default='your-fallback-secret-key')
 #   'django-insecure-q@a1z6nx2r#sjhkq5rrkwgmug=@euf-*$6_(jw+be022s6r6p4'
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.243', 'example.com', '*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.102']
+
 
 
 SECURE_BROWSER_XSS_FILTER = True
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'django_extensions',
     'core',
     'rest_framework',
     'rest_framework.authtoken',
