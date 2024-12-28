@@ -28,7 +28,8 @@ SECRET_KEY = config('SECRET_KEY', default='your-fallback-secret-key')
 #   'django-insecure-q@a1z6nx2r#sjhkq5rrkwgmug=@euf-*$6_(jw+be022s6r6p4'
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['example.com', '127.0.0.1', '192.168.0.243']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.243', 'example.com', '*']
+
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -173,8 +174,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
-    'http://localhost:3000',# Добавьте разрешенный источник для ваших запросов
+    "http://localhost:3000",
+    "http://example.com",
 ]
-
 
 CORS_ALLOW_ALL_ORIGINS = True
