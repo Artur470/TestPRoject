@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY', default='your-fallback-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #   'django-insecure-q@a1z6nx2r#sjhkq5rrkwgmug=@euf-*$6_(jw+be022s6r6p4'
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.0.102']
 
@@ -111,10 +111,15 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'testprdb',  # Обратите внимание на регистр
+        'USER': 'arturuser',
+        'PASSWORD': 'artyr2004db',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation

@@ -109,8 +109,8 @@
                     document.getElementById('createUserForm').reset(); // Очищаем форму
                 })
                 .catch(error => {
-                    console.error('Ошибка при создании пользователя:', error.response?.data || error.message);
-                    alert('Ошибка при создании пользователя: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при создании пользователя:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при создании пользователя: ' + (error.response ? error.response.data : error.message));
                 })
                 .finally(() => {
                     toggleLoading(false);
@@ -138,8 +138,8 @@
                     document.getElementById('createGroupForm').reset(); // Очищаем форму
                 })
                 .catch(error => {
-                    console.error('Ошибка при создании группы:', error.response?.data || error.message);
-                    alert('Ошибка при создании группы: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при создании группы:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при создании группы: ' + (error.response ? error.response.data : error.message));
                 })
                 .finally(() => {
                     toggleLoading(false);
@@ -167,8 +167,8 @@
                     document.getElementById('addUserToGroupForm').reset(); // Очищаем форму
                 })
                 .catch(error => {
-                    console.error('Ошибка при добавлении пользователя в группу:', error.response?.data || error.message);
-                    alert('Ошибка при добавлении пользователя в группу: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при добавлении пользователя в группу:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при добавлении пользователя в группу: ' + (error.response ? error.response.data : error.message));
                 })
                 .finally(() => {
                     toggleLoading(false);
@@ -200,8 +200,8 @@
                     document.getElementById('author').value = '';
                 })
                 .catch(error => {
-                    console.error('Ошибка при создании поста:', error.response?.data || error.message);
-                    alert('Ошибка при создании поста: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при создании поста:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при создании поста: ' + (error.response ? error.response.data : error.message));
                 })
                 .finally(() => {
                     toggleLoading(false);
@@ -228,8 +228,8 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Ошибка при получении пользователей:', error.response?.data || error.message);
-                    alert('Ошибка при получении пользователей: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при получении пользователей:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при получении пользователей: ' + (error.response ? error.response.data : error.message));
                 });
         }
 
@@ -240,13 +240,12 @@
                     const groups = response.data;
                     const groupList = document.getElementById('groupList');
                     const selectGroup = document.getElementById('selectGroup');
-
                     groupList.innerHTML = '';
                     selectGroup.innerHTML = '';
 
                     groups.forEach(group => {
                         const li = document.createElement('li');
-                        li.innerHTML = group.name;
+                        li.textContent = group.name;
                         groupList.appendChild(li);
 
                         const option = document.createElement('option');
@@ -256,20 +255,22 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Ошибка при получении групп:', error.response?.data || error.message);
-                    alert('Ошибка при получении групп: ' + (error.response?.data || error.message));
+                    console.error('Ошибка при получении групп:', error.response ? error.response.data : error.message);
+                    alert('Ошибка при получении групп: ' + (error.response ? error.response.data : error.message));
                 });
         }
 
-        // Инициализация
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            getUsers();
+            getGroups();
+        }
+
+        // Добавляем обработчики для форм
         document.getElementById('createUserForm').addEventListener('submit', createUser);
         document.getElementById('createGroupForm').addEventListener('submit', createGroup);
         document.getElementById('addUserToGroupForm').addEventListener('submit', addUserToGroup);
         document.getElementById('createPostForm').addEventListener('submit', createPost);
-
-        // Загружаем пользователей и группы при старте страницы
-        getUsers();
-        getGroups();
     </script>
 
 </body>

@@ -48,6 +48,7 @@ def send_message(request):
 # Вьюсет для пользователей
 
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -68,17 +69,21 @@ class UserViewSet(viewsets.ModelViewSet):
                     # Создаем профиль для пользователя
                     user_profile, created = UserProfile.objects.get_or_create(user=user_instance)
 
-                    # Вы можете отправить уведомление, если профиль был создан, если нужно
+                    # Логика для уведомлений (если нужно)
                     if created:
                         # Тут можно добавить логику уведомлений через WebSocket или другие методы
                         pass
 
+                    # Возвращаем дополнительную информацию, если профиль создан
+                    if created:
+                        response.data['profile_created'] = True
+
                 except User.DoesNotExist:
                     return Response({"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return response
-
-
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
